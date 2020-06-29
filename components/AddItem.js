@@ -3,6 +3,14 @@ import { View, TextInput, StyleSheet, Text, Button, TouchableOpacity, ScrollView
 
 export default (props)=>{
     const [item , setItem] =useState('');
+    const [items, setItems] = useState(props.items); 
+    const [tip, setTip] = useState(0);
+    
+
+        //const total = items.reduce((a, b) => a +=  b.task, 0)
+        //console.log(total)
+        
+  
 
     const handleSubbmit = () =>{
         if(item.trim() != ''){ 
@@ -11,17 +19,24 @@ export default (props)=>{
                 task:item.trim(),
                 done: false
             })
+            const t = items.task
+            console.log(items[0].toString())
+         
+        
             props.setItems(items);
-
+            
+            
             }
 
         setItem('');
     }
 
     return(
+        <>
         <View style={styles.area}>
             <TextInput
             placeholder="Novo produto"
+            keyboardType="numeric"
             style={styles.textinput}
             value={item}
             onChangeText={e=>setItem(e)}
@@ -30,9 +45,16 @@ export default (props)=>{
             returnKeyType="send"
 
             />
+
+            
             
 
         </View>
+        <View style={styles.resultado}>
+            <Text>teste</Text>
+        </View>
+        </>
+   
     );
 }
 
@@ -47,5 +69,13 @@ const styles = StyleSheet.create({
         height:50,
         borderRadius:5,
         padding:10
-    }
+    },
+    resultado:{
+      backgroundColor:"#FFF",
+      fontSize:25,
+      height:50,
+      borderRadius:5,
+      padding:10 
+  }
+    
 });

@@ -1,29 +1,116 @@
 import React, { useState, useEffect } from 'react'
-import { View, TextInput, StyleSheet, Text, Button, TouchableOpacity, ScrollView } from 'react-native'
+import { Modal, View, TextInput, StyleSheet, Text, Button, TouchableOpacity, ScrollView } from 'react-native'
 import lista from './src/lista'
 import AddItem from './components/AddItem';
 
 
 export default () => {
-  const [items, setItems] = useState(lista);
+  const [items, setItems] = useState([])
+  const [item, setItem] = useState('');
+  const [total, setTotal] = useState(0.00);
+  const [modalVisible, setModalVisible] = useState(false)
+
+  const handleLimpar = () => {
+    //alert('Alert with one button');
+    setModalVisible(true)
+  }
+  const handleSubbmit = () => {
+
+    if (item.trim() != '') {
+      let ites = [...items];
+      ites.push({
+        task: parseFloat(item).toFixed(2),
+
+      })
+      ites.sort().reverse();
+      setItems(ites);
+      setItem('');
+
+      let valor = 0;
+      ites.forEach(function (ite, indice, array) {
+        valor += parseFloat(ite.task);
+      })
+      setTotal(valor)
+    }
+
+
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Calculadora de Mercado</Text>
-      <AddItem  items={items} setItems={setItems}/>
-    <ScrollView style={styles.scroll} >
+      <Modal
+        visible={modalVisible}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={()=>setModalVisible(false)}
+      >
+        <View style={styles.box}>
+          <View style={styles.boxBody}>
+            <Text style={{textAlign:"center", paddingTop:10,paddingBottom:'15%', fontSize:20}}>Deseja Limpar?</Text>
+            <View style={{ width:"50%", height:60, borderWidth:5, flexDirection:"row"}}>
+              
+              <View style={
+                {flex:1,
+                  flexDirection:"row",
+                  justifyContent:"space-around"
 
-      {items.map((item, index)=>{
-        return(
-          <TouchableOpacity  activeOpacity={0.3} key={index} style={styles.viewlista}>
-            <>
-            <Text style={styles.testItem}>{item.task}</Text>
-            <View style={styles.viewBolinha}></View>
-            </>
-          </TouchableOpacity>
-        );
-      })}
-    </ScrollView>
+              }} >             
+              <TouchableOpacity  style={styles.botaoModal}>
+                <Text style={{textAlign:"center"}}>SIM</Text>
+              </TouchableOpacity>
+        
+              <TouchableOpacity  style={styles.botaoModal}>
+                <Text style={{textAlign:"center"}}>NAO</Text>
+              </TouchableOpacity>
+              </View>
+        
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      <Text style={styles.header}>Calculadora de Mercado</Text>
+      {/* <AddItem  items={items} setItems={setItems}/> */}
+      <View style={styles.area}>
+        <TextInput
+          placeholder="Novo produto"
+          keyboardType="numeric"
+          style={styles.textinput}
+          value={item}
+          onChangeText={e => setItem(e)}
+          //clicou em enviar executa função abaixo
+          onSubmitEditing={handleSubbmit}
+          returnKeyType="send"
+        />
+      </View>
+      <View style={styles.resultado}>
+        <Text style={styles.textresult}>R$ {parseFloat(total).toFixed(2)}</Text>
+      </View>
+
+      <ScrollView style={styles.scroll} >
+
+        {items.map((item, index) => {
+
+          return (
+
+            <TouchableOpacity activeOpacity={0.3} key={index} style={styles.viewlista}>
+              <>
+                <Text style={styles.testItem} >R$ {item.task}</Text>
+                <View style={styles.viewBolinha}></View>
+              </>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+
+      <View style={styles.botaoArea}>
+        <TouchableOpacity style={styles.botao}
+          onPress={handleLimpar}
+        >
+          <Text style={styles.textBotao}>Limpar</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
 
   )
@@ -39,27 +126,90 @@ const styles = StyleSheet.create({
     marginTop: 30,
     textAlign: "center"
   },
-  viewlista:{
-    padding:10,
-    flexDirection:"row"
+  viewlista: {
+    padding: 10,
+    flexDirection: "row"
 
   },
-  scroll:{
-    maxHeight:300,
-    
-  },
-  testItem:{
-    fontSize:20,
-    flex:1
+  scroll: {
+    maxHeight: 300,
 
   },
-  viewBolinha:{
-    height:20,
-    width:20,
-    borderRadius:10,
-    borderWidth:2,
+  testItem: {
+    fontSize: 20,
+    flex: 1
+
+  },
+  viewBolinha: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 2,
     //borderColor:"#FFF"
+  },
+  area: {
+    backgroundColor: "#CCC",
+    padding: 10
+  },
+  textinput: {
+    backgroundColor: "#FFF",
+    fontSize: 25,
+    height: 50,
+    borderRadius: 5,
+    padding: 10
+  },
+  resultado: {
+    backgroundColor: "#FFF",
+    fontSize: 25,
+    height: 50,
+    borderRadius: 5,
+    padding: 10
+
+  },
+  textresult: {
+    fontSize: 25,
+    textAlign: "center"
+  },
+  botao: {
+    backgroundColor: '#CCC',
+    borderRadius: 5,
+    height: 50,
+    width: 150,
+    justifyContent: "center",
+    alignItems: "center"
+
+
+  },
+  botaoArea: {
+    width: '100%',
+    alignItems: "center"
+  },
+  textBotao: {
+    fontSize: 25,
+  },
+  box: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0, 0.5)',
+    //alignSelf: "center",
+    justifyContent:"center",
+    alignItems:"center"
+  },
+  boxBody:{
+    width:'90%',
+    height:200,
+    backgroundColor:"#FFF",
+    borderRadius:10,
+    alignItems:"center",
+
+  },
+  botaoModal:{
+    width: 60,
+    height:20,
+    borderColor:"#000",
+    borderRadius:5,
+    borderWidth:2
   }
-  
+
 
 })
