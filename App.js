@@ -7,13 +7,16 @@ import AddItem from './components/AddItem';
 export default () => {
   const [items, setItems] = useState([])
   const [item, setItem] = useState('');
-  const [total, setTotal] = useState(0.00);
+  const [total, setTotal] = useState('');
   const [modalVisible, setModalVisible] = useState(false)
 
   const handleLimpar = () => {
     //alert('Alert with one button');
     setModalVisible(true)
   }
+  const formataDinheiro = (n) => {
+    return "R$ " + n.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
+    }
   const handleSubbmit = () => {
 
     if (item.trim() != '') {
@@ -30,9 +33,11 @@ export default () => {
       ites.forEach(function (ite, indice, array) {
         valor += parseFloat(ite.task);
       })
+      valor = formataDinheiro(valor)
+      console.log(valor)
       setTotal(valor)
+     
     }
-
 
   }
 
@@ -47,7 +52,7 @@ export default () => {
         <View style={styles.box}>
           <View style={styles.boxBody}>
             <Text style={{textAlign:"center", paddingTop:10,paddingBottom:'15%', fontSize:20}}>Deseja Limpar?</Text>
-            <View style={{ width:"50%", height:60, borderWidth:5, flexDirection:"row"}}>
+            <View style={{ width:"70%", height:60, flexDirection:"row"}}>
               
               <View style={
                 {flex:1,
@@ -55,11 +60,16 @@ export default () => {
                   justifyContent:"space-around"
 
               }} >             
-              <TouchableOpacity  style={styles.botaoModal}>
+              <TouchableOpacity  
+              onPress={() =>{
+              setItems([]), 
+              setModalVisible(false),
+              setTotal('')
+              } } style={styles.botaoModal}>
                 <Text style={{textAlign:"center"}}>SIM</Text>
               </TouchableOpacity>
         
-              <TouchableOpacity  style={styles.botaoModal}>
+              <TouchableOpacity onPress={() =>{setModalVisible(false)} }  style={styles.botaoModal}>
                 <Text style={{textAlign:"center"}}>NAO</Text>
               </TouchableOpacity>
               </View>
@@ -84,7 +94,7 @@ export default () => {
         />
       </View>
       <View style={styles.resultado}>
-        <Text style={styles.textresult}>R$ {parseFloat(total).toFixed(2)}</Text>
+        <Text style={styles.textresult}>{total}</Text>
       </View>
 
       <ScrollView style={styles.scroll} >
@@ -95,7 +105,7 @@ export default () => {
 
             <TouchableOpacity activeOpacity={0.3} key={index} style={styles.viewlista}>
               <>
-                <Text style={styles.testItem} >R$ {item.task}</Text>
+                <Text style={styles.testItem} >{formataDinheiro(parseFloat(item.task))}</Text>
                 <View style={styles.viewBolinha}></View>
               </>
             </TouchableOpacity>
@@ -196,19 +206,20 @@ const styles = StyleSheet.create({
     alignItems:"center"
   },
   boxBody:{
-    width:'90%',
-    height:200,
+    width:'70%',
+    height:150,
     backgroundColor:"#FFF",
     borderRadius:10,
     alignItems:"center",
 
   },
   botaoModal:{
-    width: 60,
-    height:20,
+    width: 70,
+    height:40,
     borderColor:"#000",
     borderRadius:5,
-    borderWidth:2
+    borderWidth:2,
+    justifyContent:"center"
   }
 
 
